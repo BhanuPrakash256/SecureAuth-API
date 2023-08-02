@@ -20,7 +20,7 @@ mongoose.connect(process.env.DB_CONNECTION_STRING, {
 });
 
 mongoose.connection.on('connected', () => {
-  console.log('Connected to MongoDB');
+  console.log('Connected to MongoDB ✔️');
 });
 
 mongoose.connection.on('error', (err) => {

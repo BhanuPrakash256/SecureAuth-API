@@ -2,9 +2,10 @@
   "name": "identity-verification-api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon src/server.js"
   },
   "keywords": [],
   "author": "",
@@ -15,5 +16,8 @@
     "jsonwebtoken": "^9.0.1",
     "mongoose": "^7.4.1",
     "ws": "^8.13.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   }
 }
