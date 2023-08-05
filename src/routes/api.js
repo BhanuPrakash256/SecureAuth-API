@@ -2,12 +2,20 @@
 
 const express = require('express');
 const router = express.Router();
-
-// Define your API routes here
 const userController = require('../controllers/userController');
 
-// Route for creating a new user for identity verification
-router.post('/api/users', userController.createUser);
+// Define your API routes here
 
+// Route for creating a new user for identity verification
+router.post('/', userController.createUser);
+
+// Route for retrieving user information by username
+router.get('/:username', userController.getUserByUsername);
+
+// Route for updating a user 
+router.put('/:username', userController.updateUser);
+
+// Route for deleting a user by username
+router.delete('/:username', userController.deleteUser);
 
 module.exports = router;

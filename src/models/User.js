@@ -3,6 +3,7 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
+
   firstName: {
     type: String,
     required: true,
@@ -46,7 +47,22 @@ const userSchema = new mongoose.Schema({
     enum: ['pending', 'approved', 'rejected'],
     default: 'pending',
   },
+  username: {
+    type : String,
+    required : [true, 'username is required'],
+    unique : true,
+  }
+  
 });
+
+
+userSchema.methods.updateInformation = async function (updatedData){
+
+  Object.assign(this, updatedData);
+
+  await this.save();
+};
+
 
 const User = mongoose.model('User', userSchema);
 
