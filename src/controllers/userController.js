@@ -1,5 +1,6 @@
 // src/controllers/userController.js
-
+const jwt = require('jsonwebtoken');
+const config = require('../config');
 const User = require('../models/User');
 
 // Controller function to create a new user for identity verification
@@ -21,8 +22,21 @@ exports.createUser = async (req, res) => {
     // Save the user record in the database
     await user.save();
 
-    res.status(201).json({ message: 'User created successfully', user });
-  } catch (error) {
+    const token = jwt.sign(
+      {
+        UserId: user._id, 
+        username: user.username
+      }, 
+        config.jwtSecret,
+        {expiresIn: '23h'}
+  );
+
+
+  res.status(201).json({
+      message: 'User created successfully',
+      user: user,
+      token, // Send the JWT token in the response
+    }); } catch (error) {
 
     if (error.code === 11000 || error.name === 'MongoError') {
       // Handle duplicate username error
