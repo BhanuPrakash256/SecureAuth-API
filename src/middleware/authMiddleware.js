@@ -1,15 +1,22 @@
 // src/middleware/authMiddleware.js
 
-const secretKey = 'avengers-assemble';
+const jwt = require('jsonwebtoken');
+const config = require('../config');
 
-const authenticate = (req, res, next) => {
-  const authHeader = req.headers.authorization;
+const authenticateJWT = (req, res, next) => {
+  const token = req.header('Authorization')?.replace('Bearer','');
 
-  if (!authHeader || authHeader !== `Bearer ${secretKey}`) {
-    return res.status(401).json({ message: 'Unauthorized' });
-  }
+  if(!token)  
+    return res.status(401).json({message: 'Unauthorized - No token provided'});
 
-  next();
+  jwt.verify(token, config.jwtSecret, (err, user) => {
+    if (err)
+        return res.status(403).json({message: 'Forbidden - Invalid token'});
+        
+      req.user = user;
+      next();
+  });
+
 };
 
-module.exports = authenticate;
+module.exports = authenticateJWT;
