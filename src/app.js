@@ -5,12 +5,10 @@ const morgan = require('morgan');
 const express = require('express');
 const mongoose = require('mongoose');
 const users = require('./routes/api');
-const callback = require('./routes/callback');
 const checkJwt = require('./middleware/auth0');
 
 
 const app = express();
-// const connectionString = 'mongodb://localhost:27017/identity_verification_db';
 
 // Middleware
 app.use(express.json());
@@ -36,11 +34,6 @@ mongoose.connection.on('error', (err) => {
 // Define your API routes here
 app.use('/api/users', users);
 app.use('/api/users/:username', checkJwt); // Use authentication middleware for all /api routes
-
-
-app.use('/', callback);
-
-// app.post('/api/users', userController.createUser); // Use the createUser controller function
 
 
 module.exports = app

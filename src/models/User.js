@@ -17,26 +17,8 @@ const userSchema = new mongoose.Schema({
     required: true,
   },
   address: {
-    street: {
-      type: String,
-      required: true,
-    },
-    city: {
-      type: String,
-      required: true,
-    },
-    state: {
-      type: String,
-      required: true,
-    },
-    postalCode: {
-      type: String,
-      required: true,
-    },
-    country: {
-      type: String,
-      required: true,
-    },
+    type: String,
+    required: true
   },
   governmentID: {
     type: String,
@@ -51,7 +33,14 @@ const userSchema = new mongoose.Schema({
     type : String,
     required : [true, 'username is required'],
     unique : true,
-  }
+  },
+  email: { type: String, required: true },
+  emailVerified: { type: Boolean, default: false },
+  emailVerificationCode: { type: String },
+
+  // phoneNumber: { type: String, required: true },
+  // phoneVerified: { type: Boolean, default: false },
+  // phoneVerificationCode: { type: String }
   
 });
 
