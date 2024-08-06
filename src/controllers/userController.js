@@ -2,13 +2,14 @@
 const jwt = require('jsonwebtoken');
 const config = require('../config');
 const User = require('../models/User');
-const send_email =  require('../verifications/send_email')
+const send_email =  require('../verifications/send_email');
+const send_sms = require('../verifications/send_sms');
 
 // Controller function to create a new user for identity verification
 exports.createUser = async (req, res) => {
   try {
     // Get user data from the request body
-    const { firstName, lastName, dateOfBirth, address, governmentID, username, email} = req.body;
+    const { firstName, lastName, dateOfBirth, address, governmentID, username, email, phoneNumber} = req.body;
 
     // Create a new user record in the database
     const user = new User({
@@ -19,6 +20,7 @@ exports.createUser = async (req, res) => {
       governmentID,
       username,
       email,
+      phoneNumber
     });
 
     // Save the user record in the database
@@ -35,9 +37,10 @@ exports.createUser = async (req, res) => {
   );
 
   await send_email.sendVerificationEmail(user);
+  await send_sms.sendVerificationSMS(user);
 
   res.status(201).json({
-      message: 'User created successfully. Verification email sent.',
+      message: 'User created successfully. Verification email sent. Verification code sent.',
       user: user,
       token, // Send the JWT token in the response
     }); } catch (error) {
@@ -145,5 +148,24 @@ exports.verifyEmail = async (req, res) => {
   } catch (error) {
     console.error('Error verifying email:', error);
     res.status(500).json({ message: 'Error verifying email' });
+  }
+};
+
+// Controller function to verify phone number
+exports.verifyPhoneNumber = async (req, res) => {
+  try {
+    const { username, code } = req.body;
+    const user = await User.findOne({ username, phoneVerificationCode: code });
+    
+    if (!user) return res.status(400).json({ message: 'Invalid code' });
+    
+    user.phoneVerified = true;
+    user.phoneVerificationCode = undefined;
+    
+    await user.save();
+    res.status(200).json({ message: 'Phone number verified successfully' });
+  
+  } catch (error) {
+    res.status(500).json({ message: 'Error verifying phone number', error });
   }
 };
