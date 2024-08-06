@@ -38,9 +38,9 @@ const userSchema = new mongoose.Schema({
   emailVerified: { type: Boolean, default: false },
   emailVerificationCode: { type: String },
 
-  // phoneNumber: { type: String, required: true },
-  // phoneVerified: { type: Boolean, default: false },
-  // phoneVerificationCode: { type: String }
+  phoneNumber: { type: String, required: true },
+  phoneVerified: { type: Boolean, default: false },
+  phoneVerificationCode: { type: String }
   
 });
 

@@ -1,6 +1,4 @@
 const nodemailer = require('nodemailer')
-const crypto = require('crypto')
-const User = require('../models/User')
 const path = require('path');
 const fs = require('fs');
 
@@ -23,7 +21,7 @@ exports.sendVerificationEmail = async (user) => {
         // Customize the HTML content with a dynamic verification code
         
         const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-        user.emailverificationCode = verificationCode;
+        user.emailVerificationCode = verificationCode;
         const customizedHtml = htmlTemplate.replace('123456', verificationCode);
 
 

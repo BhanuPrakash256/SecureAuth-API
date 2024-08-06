@@ -16,9 +16,11 @@
     "express-jwt": "^5.3.3",
     "jsonwebtoken": "^9.0.1",
     "jwks-rsa": "^1.10.1",
+    "lodash": "^4.17.21",
     "mongoose": "^7.4.1",
     "morgan": "^1.10.0",
     "nodemailer": "^6.9.14",
+    "twilio": "^5.2.2",
     "ws": "^8.13.0"
   },
   "devDependencies": {

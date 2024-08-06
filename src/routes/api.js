@@ -21,4 +21,7 @@ router.delete('/:username', userController.deleteUser);
 // Route for verifying email
 router.post('/verify-email/:username', userController.verifyEmail);
 
+// Route for verifying phone number
+router.post('/verify-phone/:username', userController.verifyPhoneNumber);
+
 module.exports = router;
