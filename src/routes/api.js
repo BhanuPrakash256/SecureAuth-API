@@ -18,4 +18,7 @@ router.put('/:username', userController.updateUser);
 // Route for deleting a user by username
 router.delete('/:username', userController.deleteUser);
 
+// Route for verifying email
+router.post('/verify-email/:username', userController.verifyEmail);
+
 module.exports = router;
