@@ -3,6 +3,7 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
+const verifyController = require('../controllers/verifyController');
 
 // Define your API routes here
 
@@ -19,9 +20,12 @@ router.put('/:username', userController.updateUser);
 router.delete('/:username', userController.deleteUser);
 
 // Route for verifying email
-router.post('/verify-email/:username', userController.verifyEmail);
+router.post('/verify-email/:username', verifyController.verifyEmail);
 
 // Route for verifying phone number
-router.post('/verify-phone/:username', userController.verifyPhoneNumber);
+router.post('/verify-phone/:username', verifyController.verifyPhoneNumber);
+
+// Route for updating verification status
+router.get('/verify-status/:username', verifyController.updateVerificationStatus);
 
 module.exports = router;
