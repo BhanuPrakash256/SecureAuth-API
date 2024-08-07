@@ -5,7 +5,7 @@ const morgan = require('morgan');
 const express = require('express');
 const mongoose = require('mongoose');
 const users = require('./routes/api');
-const checkJwt = require('./middleware/auth0');
+const authenticateJWT = require('./middleware/auth0');
 
 
 const app = express();
@@ -33,7 +33,7 @@ mongoose.connection.on('error', (err) => {
 
 // Define your API routes here
 app.use('/api/users', users);
-app.use('/api/users/:username', checkJwt); // Use authentication middleware for all /api routes
+app.use('/api/users/:username', authenticateJWT); // Use authentication middleware for all /api routes
 
 
 module.exports = app
