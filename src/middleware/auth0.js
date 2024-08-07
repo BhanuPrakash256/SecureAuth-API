@@ -1,26 +1,20 @@
-const jwt = require('express-jwt');
-const jwksRsa = require('jwks-rsa');
+const jwt = require('jsonwebtoken');
+const config = require('../config');
 
-// Auth0 configuration
-const authConfig = {
-  domain: 'dev-ojuyeeawrwmuca00.us.auth0.com',
-  audience: 'https://identity-verification.example.com'
+const authenticateJWT = (req, res, next) => {
+  const token = req.header('Authorization')?.replace('Bearer','');
+
+  if(!token)  
+    return res.status(401).json({message: 'Unauthorized - No token provided'});
+
+  jwt.verify(token, config.jwtSecret, (err, user) => {
+    if (err)
+        return res.status(403).json({message: 'Forbidden - Invalid token'});
+
+      req.user = user;
+      next();
+  });
+
 };
 
-// Middleware to validate JWT using Auth0
-const checkJwt = jwt({
-  // Dynamically provide a signing key based on the kid in the header and the signing keys provided by the JWKS endpoint
-  secret: jwksRsa.expressJwtSecret({
-    cache: true,
-    rateLimit: true,
-    jwksRequestsPerMinute: 5,
-    jwksUri: `https://${authConfig.domain}/.well-known/jwks.json`
-  }),
-  
-  // Validate the audience and the issuer
-  audience: authConfig.audience,
-  issuer: `https://${authConfig.domain}/`,
-  algorithms: ['RS256']
-});
-
-module.exports = checkJwt;
+module.exports = authenticateJWT;

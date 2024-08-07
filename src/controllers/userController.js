@@ -24,7 +24,6 @@ exports.createUser = async (req, res) => {
     });
 
     // Save the user record in the database
-    // user.emailverificationCode = '100100';
     await user.save();
 
     const token = jwt.sign(
@@ -41,7 +40,7 @@ exports.createUser = async (req, res) => {
 
   res.status(201).json({
       message: 'User created successfully. Verification email sent. Verification code sent.',
-      user: user,
+      // user: user,
       token, // Send the JWT token in the response
     }); } catch (error) {
 
@@ -57,7 +56,6 @@ exports.createUser = async (req, res) => {
 
 
 exports.getUserByUsername = async (req, res) => {
-
   try {
     
     const { username } = req.params;
@@ -76,10 +74,6 @@ exports.getUserByUsername = async (req, res) => {
       message : 'Error retrieving user information.'
     });
   }
-
-
-
-
 }
 
 
@@ -131,7 +125,7 @@ exports.deleteUser = async (req, res) => {
 // Function to verify email
 exports.verifyEmail = async (req, res) => {
   try {
-    const { username, code } = req.params;
+    const { username, code } = req.body;
     
     // Find the user by the email verification token
     const user = await User.findOne({ username });
