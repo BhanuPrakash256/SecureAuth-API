@@ -1,6 +1,5 @@
 // src/controllers/userController.js
-const jwt = require('jsonwebtoken');
-const config = require('../config');
+
 const User = require('../models/User');
 const send_email =  require('../verifications/send_email');
 const send_sms = require('../verifications/send_sms');
@@ -26,22 +25,12 @@ exports.createUser = async (req, res) => {
     // Save the user record in the database
     await user.save();
 
-    const token = jwt.sign(
-      {
-        UserId: user._id, 
-        username: user.username
-      }, 
-        config.jwtSecret,
-        {expiresIn: '23h'}
-  );
 
   await send_email.sendVerificationEmail(user);
   await send_sms.sendVerificationSMS(user);
 
   res.status(201).json({
       message: 'User created successfully. Verification email sent. Verification code sent.',
-      // user: user,
-      token, // Send the JWT token in the response
     }); } catch (error) {
 
     if (error.code === 11000 || error.name === 'MongoError') {
@@ -121,45 +110,3 @@ exports.deleteUser = async (req, res) => {
 
 
 }
-
-// Function to verify email
-exports.verifyEmail = async (req, res) => {
-  try {
-    const { username, code } = req.body;
-    
-    // Find the user by the email verification token
-    const user = await User.findOne({ username });
-
-    if (user.emailVerificationCode !== code) {
-        return res.status(404).json({ message: 'Invalid verification code' });
-      }
-    // Update user's email verification status
-    user.emailVerified = true;
-    user.emailVerificationCode = undefined; // Remove the token after verification
-    await user.save();
-
-    res.status(200).json({ message: 'Email verified successfully' });
-  } catch (error) {
-    console.error('Error verifying email:', error);
-    res.status(500).json({ message: 'Error verifying email' });
-  }
-};
-
-// Controller function to verify phone number
-exports.verifyPhoneNumber = async (req, res) => {
-  try {
-    const { username, code } = req.body;
-    const user = await User.findOne({ username, phoneVerificationCode: code });
-    
-    if (!user) return res.status(400).json({ message: 'Invalid code' });
-    
-    user.phoneVerified = true;
-    user.phoneVerificationCode = undefined;
-    
-    await user.save();
-    res.status(200).json({ message: 'Phone number verified successfully' });
-  
-  } catch (error) {
-    res.status(500).json({ message: 'Error verifying phone number', error });
-  }
-};
