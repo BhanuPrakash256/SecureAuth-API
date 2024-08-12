@@ -1,6 +1,4 @@
 const User = require('../models/User');
-const jwt = require('jsonwebtoken');
-const config = require('../config');
 
 // Function to verify email
 exports.verifyEmail = async (req, res) => {
@@ -61,17 +59,8 @@ exports.verifyEmail = async (req, res) => {
       if (user.emailVerified && user.phoneVerified) {
         user.verificationStatus = 'verified';
         await user.save();
-        
-        const token = jwt.sign(
-        {
-          UserId: user._id, 
-          username: user.username
-        }, 
-          config.jwtSecret,
-          {expiresIn: '23h'}
-    );
-  
-        return res.status(200).json({ message: 'User verified successfully', token });
+
+        return res.status(200).json({ message: 'User verified successfully. Now, Login with your credentials'});
       }
   
       res.status(400).json({ message: 'Email and phone number verification required' });

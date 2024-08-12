@@ -8,7 +8,7 @@ const send_sms = require('../verifications/send_sms');
 exports.createUser = async (req, res) => {
   try {
     // Get user data from the request body
-    const { firstName, lastName, dateOfBirth, address, governmentID, username, email, phoneNumber} = req.body;
+    const { firstName, lastName, dateOfBirth, address, governmentID, username, password, email, phoneNumber} = req.body;
 
     // Create a new user record in the database
     const user = new User({
@@ -18,6 +18,7 @@ exports.createUser = async (req, res) => {
       address,
       governmentID,
       username,
+      password,
       email,
       phoneNumber
     });
