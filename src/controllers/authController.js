@@ -1,5 +1,5 @@
 const User = require('../models/User');
-const { createAccessToken, createRefreshToken, revokeTokens } = require('./tokenController');
+const { createAccessToken, createRefreshToken } = require('./tokenController');
 
 
 exports.login = async (req, res) => {
