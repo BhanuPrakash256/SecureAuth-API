@@ -1,8 +1,8 @@
 // src/controllers/userController.js
 
 const User = require('../models/User');
-const send_email =  require('../verifications/send_email');
-const send_sms = require('../verifications/send_sms');
+const send_email =  require('../verifications/email');
+const send_sms = require('../verifications/sms');
 
 // Controller function to create a new user for identity verification
 exports.createUser = async (req, res) => {
