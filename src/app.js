@@ -7,7 +7,7 @@ const users = require('./routes/users');
 const auth = require('./routes/authentication');
 const tokens = require('./routes/tokens');
 const verify = require('./routes/verification');
-
+const password = require('./routes/password');
 
 const app = express();
 
@@ -36,6 +36,7 @@ app.use('/api/users', users);
 app.use('/api/users', auth);
 app.use('/api/users', verify);
 app.use('/api/users', tokens);
+app.use('/api/users', password);
 
 
 module.exports = app
