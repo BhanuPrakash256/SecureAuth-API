@@ -4,10 +4,10 @@ const User = require('../models/User');
 const authenticateJWT = async (req, res, next) => {
   const authHeader = req.headers.authorization;
   const {username} = req.params;
+  
   if(authHeader)
   {
       const token = authHeader.split(' ')[1];
-      // console.log(token);
 
       try {
         const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
@@ -17,8 +17,6 @@ const authenticateJWT = async (req, res, next) => {
           return res.status(401).json({ message: 'User not found.' });
         }
 
-        // Ensure token is an access token
-        console.log(decoded.token_type);
         if (decoded.token_type !== 'access') {
             return res.status(403).json({ message: 'Invalid token type' });
         }

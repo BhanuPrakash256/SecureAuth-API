@@ -36,17 +36,15 @@ function createRefreshToken(user) {
 }
 
 const checkRefreshToken = async (refreshToken) => {
-    if (!refreshToken) {
-        return { valid: false, message: 'Refresh token is required' };
-    }
+    
+    if (!refreshToken)  return { valid: false, message: 'Refresh token is required' };
+    
 
     try {
         const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
         const user = await User.findById(decoded.id);
 
-        if (!user) {
-            return { valid: false, message: 'User not found' };
-        }
+        if (!user)  return { valid: false, message: 'User not found' };
 
         if (decoded.tokenVersion !== user.tokenVersion) {
             return { valid: false, message: 'Invalid token version' };

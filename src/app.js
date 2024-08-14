@@ -1,10 +1,12 @@
-// src/app.js
 
 require('dotenv').config();
 const morgan = require('morgan');
 const express = require('express');
 const mongoose = require('mongoose');
-const users = require('./routes/api');
+const users = require('./routes/users');
+const auth = require('./routes/authentication');
+const tokens = require('./routes/tokens');
+const verify = require('./routes/verification');
 
 
 const app = express();
@@ -30,8 +32,10 @@ mongoose.connection.on('error', (err) => {
 });
 
 
-// Define your API routes here
 app.use('/api/users', users);
+app.use('/api/users', auth);
+app.use('/api/users', verify);
+app.use('/api/users', tokens);
 
 
 module.exports = app
