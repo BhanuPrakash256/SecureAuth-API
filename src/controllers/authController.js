@@ -14,9 +14,8 @@ exports.login = async (req, res) => {
     const accessToken = createAccessToken(user);
     const refreshToken = createRefreshToken(user);
 
-    // You might want to store the refreshToken in a database or a cache
     return res.status(200).json({ accessToken, refreshToken });
   } catch (error) {
-    return res.status(500).json({ message: 'Error logging in', error });
+    return res.status(500).json({ message: 'Error logging in', error: error.message });
   }
 };

@@ -18,7 +18,6 @@ exports.verifyEmail = async (req, res) => {
       res.status(200).json({ message: 'Email verified successfully' });
     } catch (error) 
     {
-      console.error('Error verifying email:', error);
       res.status(500).json({ message: 'Error verifying email' });
     }
   };
@@ -31,7 +30,6 @@ exports.verifyEmail = async (req, res) => {
       
       if (!user) 
       {
-          console.log(user.phoneVerificationCode, code);
           return res.status(400).json({ message: 'Invalid code' });
       }
       
@@ -43,7 +41,7 @@ exports.verifyEmail = async (req, res) => {
     
     } catch (error)
     {
-      res.status(500).json({ message: 'Error verifying phone number', error });
+      res.status(500).json({ message: 'Error verifying phone number'});
     }
   };
 
@@ -70,6 +68,5 @@ exports.verifyEmail = async (req, res) => {
     } catch (error)
     {
       res.status(500).json({ message: 'Error updating verification status', error });
-      console.log(error);
     }
   };
