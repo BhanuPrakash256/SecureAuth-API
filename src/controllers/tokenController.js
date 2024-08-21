@@ -35,45 +35,11 @@ function createRefreshToken(user) {
     }
 }
 
-const checkRefreshToken = async (refreshToken) => {
-    
-    if (!refreshToken)  return { valid: false, message: 'Refresh token is required' };
-    
-
-    try {
-        const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-        const user = await User.findById(decoded.id);
-
-        if (!user)  return { valid: false, message: 'User not found' };
-
-        if (decoded.tokenVersion !== user.tokenVersion) {
-            return { valid: false, message: 'Invalid token version' };
-        }
-
-        return { valid: true, user };
-
-    } catch (error) {
-        return { valid: false, message: error.message === 'jwt expired' ? 'Refresh token expired' : 'Invalid refresh token' };
-    }
-}
-
 const issueTokens = async (req, res) => {
+
     try {
-        const authHeader = req.headers.authorization;
-        if (!authHeader) {
-            return res.status(401).json({ message: 'Authorization header is required' });
-        }
 
-        const refreshToken = authHeader.split(' ')[1];
-        if (!refreshToken) {
-            return res.status(401).json({ message: 'Refresh token is missing' });
-        }
-
-        const { valid, user, message } = await checkRefreshToken(refreshToken);
-
-        if (!valid) {
-            return res.status(401).json({ message });
-        }
+        let user = req.user;
 
         user.tokenVersion += 1;
         await user.save();
@@ -89,22 +55,9 @@ const issueTokens = async (req, res) => {
 }
 
 const revokeTokens = async (req, res) => {
+    
     try {
-        const authHeader = req.headers.authorization;
-        if (!authHeader) {
-            return res.status(401).json({ message: 'Authorization header is required' });
-        }
-
-        const refreshToken = authHeader.split(' ')[1];
-        if (!refreshToken) {
-            return res.status(401).json({ message: 'Refresh token is missing' });
-        }
-
-        const { valid, user, message } = await checkRefreshToken(refreshToken);
-
-        if (!valid) {
-            return res.status(401).json({ message });
-        }
+        let user = req.user;
 
         user.tokenVersion += 1;
         await user.save();
@@ -120,5 +73,5 @@ module.exports = {
     createAccessToken,
     createRefreshToken,
     issueTokens,
-    revokeTokens
+    revokeTokens,
 };
