@@ -3,11 +3,10 @@ require('dotenv').config();
 const morgan = require('morgan');
 const express = require('express');
 const mongoose = require('mongoose');
-const users = require('./routes/users');
-const auth = require('./routes/authentication');
-const tokens = require('./routes/tokens');
-const verify = require('./routes/verification');
-const password = require('./routes/password');
+const { UserRoute, PasswordRoute, TokenRoute, VerifyRoute, AuthRoute } = require('./routes/index');
+
+const errorHandler = require('./middleware/error');
+
 
 const app = express();
 
@@ -32,11 +31,12 @@ mongoose.connection.on('error', (err) => {
 });
 
 
-app.use('/api/users', users);
-app.use('/api/users', auth);
-app.use('/api/users', verify);
-app.use('/api/users', tokens);
-app.use('/api/users', password);
+app.use('/api/users', UserRoute);
+app.use('/api/users', AuthRoute);
+app.use('/api/users', VerifyRoute);
+app.use('/api/users', TokenRoute);
+app.use('/api/users', PasswordRoute);
 
+app.use(errorHandler);
 
 module.exports = app
