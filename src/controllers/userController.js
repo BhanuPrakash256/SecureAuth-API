@@ -1,17 +1,24 @@
 // src/controllers/userController.js
 
 const User = require('../models/User');
+const CustomError = require('../Utils/errors/CustomError');
+const NotFoundError = require('../Utils/errors/NotFoundError');
 const send_email =  require('../verifications/email');
 const send_sms = require('../verifications/sms');
 
 // Controller function to create a new user for identity verification
-exports.createUser = async (req, res) => {
+exports.createUser = async (req, res, next) => {
   try {
     // Get user data from the request body
     const { firstName, lastName, dateOfBirth, address, governmentID, username, password, email, phoneNumber} = req.body;
 
+    const user = await User.findOne({ username });
+    if (user) {
+        throw new CustomError('Username already exists', 409);
+    };
+
     // Create a new user record in the database
-    const user = new User({
+    const newUser = new User({
       firstName,
       lastName,
       dateOfBirth,
@@ -24,34 +31,32 @@ exports.createUser = async (req, res) => {
     });
 
     // Save the user record in the database
-    await user.save();
+    await newUser.save();
 
 
-  await send_email.sendVerificationEmail(user);
-  await send_sms.sendVerificationSMS(user);
+    await send_email.sendVerificationEmail(newUser);
+    await send_sms.sendVerificationSMS(newUser);
 
-  res.status(201).json({
-      message: 'User created successfully. Verification email sent. Verification code sent.',
-    }); 
+    res.status(201).json({ 
+      message: `User created successfully.
+      Verification email sent. Verification code sent.`
+  }); 
+     
   } catch (error) {
-
-    if (error.code === 11000 || error.name === 'MongoError') {
-      // Handle duplicate username error
-      return res.status(409).json({ message: 'Username already exists'});
-    }
-
-    res.status(500).json({ message: 'Error creating user', error });
+      next(error);
   }
 };
 
 
-exports.getUserByUsername = async (req, res) => {
+exports.getUserByUsername = async (req, res, next) => {
   try {
     
     const { username } = req.params;
     const user = await User.findOne({ username });
 
-    if(!user)   return res.status(404).json({message: 'User not found '})
+    if(!user) {
+      throw new NotFoundError('User Not Found');
+    }
 
     return res.status(200).json({
       message : "User information retrieved successfully ✔️",
@@ -59,14 +64,12 @@ exports.getUserByUsername = async (req, res) => {
     })
 
   } catch (error) {
-    return res.status(500).json({
-      message : 'Error retrieving user information.'
-    });
+    next(error);
   }
 }
 
 
-exports.updateUser = async (req, res) =>{
+exports.updateUser = async (req, res, next) =>{
 
   try {
     const { username } = req.params;
@@ -74,7 +77,9 @@ exports.updateUser = async (req, res) =>{
 
     const user = await User.findOne({ username });
 
-    if(!user)   return res.status(404).json({message: "2 User not found"});
+    if(!user) {
+      throw new NotFoundError('User Not Found');
+    }
 
     await user.updateInformation(updatedData);
 
@@ -84,26 +89,26 @@ exports.updateUser = async (req, res) =>{
     })
 
   } catch (error) {
-    return res.status(500).json({ message: 'Error updating user information' });
-
+      next(error);
   }
 }
 
 
-exports.deleteUser = async (req, res) => {
+exports.deleteUser = async (req, res, next) => {
 
   try {
 
     const { username } = req.params;
     const user = await User.findOneAndDelete({ username });
 
-    if(!user)   return res.status(404).json({message: "1 User not found"});
+    if(!user) {
+      throw new NotFoundError('User Not Found');
+    }
 
     return res.status(200).json({ message: 'User deleted successfully' });
 
-  } catch (err) {
-    return res.status(500).json({ message: 'Error deleting user' });
-
+  } catch (error) {
+      next(error);
   }
 
 
