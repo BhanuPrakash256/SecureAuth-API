@@ -1,7 +1,8 @@
 const {User} = require('../models/User');
 const { createAccessToken, createRefreshToken } = require('../Utils/tokens/createTokens');
-const AuthenticationError = require('../Utils/errors/AuthenticationError');
+const {AuthenticationError} = require('../Utils/errors/AuthenticationError');
 const NotFoundError = require('../Utils/errors/NotFoundError');
+const ForbiddenError = require('../Utils/errors/ForbiddenError');
 
 exports.login = async (req, res, next) => {
   try {
@@ -10,6 +11,10 @@ exports.login = async (req, res, next) => {
     
     if(!user) {
         throw new NotFoundError('User Not Found');
+    }
+
+    if(user.verificationStatus !== 'verified') {
+      throw new ForbiddenError('Email and phone number verifications required');
     }
 
     if (!(await user.comparePassword(password))){

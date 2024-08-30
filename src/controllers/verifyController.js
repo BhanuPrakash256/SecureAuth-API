@@ -1,5 +1,6 @@
 const {User} = require('../models/User');
 const { VerificationError } = require('../Utils/errors/BadRequestError');
+const ForbiddenError = require('../Utils/errors/ForbiddenError');
 const NotFoundError = require('../Utils/errors/NotFoundError');
 
 // Function to verify email
@@ -56,15 +57,14 @@ exports.updateVerificationStatus = async (req, res, next) => {
       throw new NotFoundError('User Not Found');
     }
 
-    if (user.emailVerified && user.phoneVerified)
-    {
-      user.verificationStatus = 'verified';
-      await user.save();
-
-      return res.status(200).json({ message: 'User verified successfully. Now, Login with your credentials'});
+    if(!user.emailVerified || !user.phoneVerified) {
+        throw new ForbiddenError('Email and phone number verifications required');
     }
 
-    res.status(403).json({ message: 'Email and phone number verification required' });
+    user.verificationStatus = 'verified';
+    await user.save();
+
+    return res.status(200).json({ message: 'User verified successfully. Now, Login with your credentials'});
   } catch (error) {
     next(error);
   }

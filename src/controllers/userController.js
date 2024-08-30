@@ -67,9 +67,20 @@ exports.getUserByUsername = async (req, res, next) => {
       throw new NotFoundError('User Not Found');
     }
 
+    const result = {
+      username: user.username,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      dateOfBirth: user.dateOfBirth,
+      address: user.address,
+      governmentID: user.governmentID,
+      email: user.email,
+      phoneNumber: user.phoneNumber,
+    };
+
     return res.status(200).json({
       message : "User information retrieved successfully ✔️",
-      user,
+      result,
     })
 
   } catch (error) {

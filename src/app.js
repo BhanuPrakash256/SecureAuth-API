@@ -4,6 +4,7 @@ const morgan = require('morgan');
 const express = require('express');
 const mongoose = require('mongoose');
 const { UserRoute, PasswordRoute, TokenRoute, VerifyRoute, AuthRoute } = require('./routes/index');
+const logger = require('../src/Utils/logger');
 
 const errorHandler = require('./middleware/error');
 
@@ -21,13 +22,13 @@ mongoose.connect(process.env.DB_CONNECTION_STRING, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-
+ 
 mongoose.connection.on('connected', () => {
-  console.log('Connected to MongoDB ✔️');
+  logger.info('Connected to MongoDB ✔️');
 });
 
 mongoose.connection.on('error', (err) => {
-  console.error('MongoDB connection error:', err);
+  logger.error('MongoDB connection error:', err);
 });
 
 
