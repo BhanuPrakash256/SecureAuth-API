@@ -1,7 +1,7 @@
-// src/models/User.js
 
 const mongoose = require('mongoose');
-const bcrypt =  require('bcrypt');
+const Joi = require('joi');
+const { hashPassword, comparePassword} = require('../Utils/hashPassword');
 
 const userSchema = new mongoose.Schema({
 
@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema({
     required: true,
   },
   dateOfBirth: {
-    type: Date,
+    type: Joi.date(),
     required: true,
   },
   address: {
@@ -35,12 +35,23 @@ const userSchema = new mongoose.Schema({
     required : [true, 'username is required'],
     unique : true,
   },
-  password: { type: String, required: true },
-  email: { type: String, required: true },
+  password: { 
+    type: String, 
+    required: true 
+  },
+  email: { 
+    type: String, 
+    required: true,
+    unique: true,
+  },
+  phoneNumber: { 
+    type: String, 
+    required: true 
+  },
+
   emailVerified: { type: Boolean, default: false },
   emailVerificationCode: { type: String },
 
-  phoneNumber: { type: String, required: true },
   phoneVerified: { type: Boolean, default: false },
   phoneVerificationCode: { type: String },
   
@@ -50,27 +61,38 @@ const userSchema = new mongoose.Schema({
 });
 
 
-userSchema.methods.updateInformation = async function (updatedData){
-
-  Object.assign(this, updatedData);
-
-  await this.save();
-};
-
 // Hash password before saving
 userSchema.pre('save', async function(next) {
   if (this.isModified('password') || this.isNew) {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
+    this.password = await hashPassword(this.password);
   }
   next();
 });
 
 // Method to compare password
 userSchema.methods.comparePassword = async function(password) {
-  return bcrypt.compare(password, this.password);
+  return await comparePassword(password, this.password);
 };
+
+function validateUser(user){
+
+  const schema = Joi.object({
+    firstName: Joi.string().min(5).max(50).required(),
+    lastName: Joi.string().min(5).max(50).required(),
+    dateOfBirth: Joi.date().min('1-1-1974').max('now'),
+    address: Joi.string().min(5).max(50).required(),
+    governmentID: Joi.string().min(5).max(50).required(),
+    username: Joi.string().min(3).max(50).required(),
+    password: Joi.string().min(8).max(50).required(),
+    email: Joi.string().min(5).max(255).required().email(),
+    phoneNumber: Joi.string().length(13).pattern(/^\+91[0-9]{10}$/).required(),
+  });
+
+  return schema.validate(user);
+
+};
+
 
 const User = mongoose.model('User', userSchema);
 
-module.exports = User;
+module.exports = { User, validateUser};

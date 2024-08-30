@@ -1,4 +1,4 @@
-const User = require('../models/User');
+const {User} = require('../models/User');
 const { createAccessToken, createRefreshToken } = require('../Utils/tokens/createTokens');
 const AuthenticationError = require('../Utils/errors/AuthenticationError');
 const NotFoundError = require('../Utils/errors/NotFoundError');

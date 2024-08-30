@@ -1,9 +1,9 @@
-const User = require('../../models/User');
+const {User} = require('../../models/User');
 const NotFoundError = require('../errors/NotFoundError');
 const { BadRequestError } = require('../errors/BadRequestError');
 const { AuthenticationError } = require('../errors/AuthenticationError');
 
-const validateUser = async (decoded, tokenType) => {
+const validateToken = async (decoded, tokenType) => {
   const user = await User.findById(decoded.id);
   
   if (!user) throw new NotFoundError('User not found.');
@@ -13,4 +13,4 @@ const validateUser = async (decoded, tokenType) => {
   return user;
 };
 
-module.exports = validateUser;
+module.exports = validateToken;

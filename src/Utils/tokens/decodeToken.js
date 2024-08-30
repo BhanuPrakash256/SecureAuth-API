@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { AuthenticationError, TokenExpiredError } = require('../errors/AuthenticationError');
 
-const verifyToken = (token, secret) => {
+const decodeToken = (token, secret) => {
   try {
     return jwt.verify(token, secret);
   } catch (err) {
@@ -12,4 +12,4 @@ const verifyToken = (token, secret) => {
   }
 };
 
-module.exports = verifyToken;
+module.exports = decodeToken;

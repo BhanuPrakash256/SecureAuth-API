@@ -1,4 +1,4 @@
-const User = require('../models/User');
+const {User} = require('../models/User');
 const { VerificationError } = require('../Utils/errors/BadRequestError');
 const NotFoundError = require('../Utils/errors/NotFoundError');
 

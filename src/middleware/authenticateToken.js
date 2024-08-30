@@ -1,5 +1,5 @@
-const validateUser = require('../Utils/users/validateUser');
-const verifyToken = require('../Utils/tokens/verifyToken');
+const validateToken = require('../Utils/tokens/validateToken');
+const decodeToken = require('../Utils/tokens/decodeToken');
 const { AuthenticationError } = require('../Utils/errors/AuthenticationError');
 
 const authenticateToken = (tokenType) => async (req, res, next) => {
@@ -15,9 +15,9 @@ const authenticateToken = (tokenType) => async (req, res, next) => {
     }
 
     const secret = tokenType === 'access' ? process.env.ACCESS_TOKEN_SECRET : process.env.REFRESH_TOKEN_SECRET;
-    const decoded = verifyToken(token, secret);
+    const decoded = decodeToken(token, secret);
 
-    req.user = await validateUser(decoded, tokenType);
+    req.user = await validateToken(decoded, tokenType);
     next();
 
   } catch (error) {
