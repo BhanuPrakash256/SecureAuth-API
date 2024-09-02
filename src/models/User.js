@@ -77,8 +77,8 @@ userSchema.methods.comparePassword = async function(password) {
 function validateUser(user){
 
   const schema = Joi.object({
-    firstName: Joi.string().min(5).max(50).required(),
-    lastName: Joi.string().min(5).max(50).required(),
+    firstName: Joi.string().min(3).max(50).required(),
+    lastName: Joi.string().min(3).max(50).required(),
     dateOfBirth: Joi.date().min('1-1-1974').max('now'),
     address: Joi.string().min(5).max(50).required(),
     governmentID: Joi.string().min(5).max(50).required(),

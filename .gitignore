@@ -2,5 +2,7 @@ dist/
 node_modules/
 .env
 .vscode
-coverage
+coverage/
 *.log
+__tests__/
+__mocks__/

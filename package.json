@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest src/__tests__/Unit/controllers/authController.test.js  --detectOpenHandles",
     "start": "nodemon src/server.js"
   },
   "keywords": [],
@@ -28,6 +28,7 @@
   },
   "devDependencies": {
     "jest": "^29.7.0",
+    "mongodb-memory-server": "^10.0.0",
     "node-mocks-http": "^1.15.1",
     "nodemailer-mock": "^2.0.6",
     "nodemon": "^3.0.1",

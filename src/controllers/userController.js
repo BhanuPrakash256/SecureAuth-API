@@ -1,5 +1,5 @@
 // src/controllers/userController.js
-
+const _ = require('lodash');
 const {User, validateUser} = require('../models/User');
 const { BadRequestError } = require('../Utils/errors/BadRequestError');
 const CustomError = require('../Utils/errors/CustomError');
@@ -7,14 +7,13 @@ const NotFoundError = require('../Utils/errors/NotFoundError');
 const send_email =  require('../verifications/email');
 const send_sms = require('../verifications/sms');
 
-// Controller function to create a new user for identity verification
+
 exports.createUser = async (req, res, next) => {
   try {
 
     const { error } = validateUser(req.body);
     if (error) throw new BadRequestError(error.details[0].message);
 
-    // Get user data from the request body
     const { firstName, lastName, dateOfBirth, address, governmentID, username, password, email, phoneNumber} = req.body;
 
     let user = await User.findOne({ username });
@@ -27,7 +26,6 @@ exports.createUser = async (req, res, next) => {
         throw new CustomError('Email already exists', 409);
     };
 
-    // Create a new user record in the database
     const newUser = new User({
       firstName,
       lastName,
@@ -40,7 +38,6 @@ exports.createUser = async (req, res, next) => {
       phoneNumber
     });
 
-    // Save the user record in the database
     await newUser.save();
 
 
@@ -67,16 +64,7 @@ exports.getUserByUsername = async (req, res, next) => {
       throw new NotFoundError('User Not Found');
     }
 
-    const result = {
-      username: user.username,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      dateOfBirth: user.dateOfBirth,
-      address: user.address,
-      governmentID: user.governmentID,
-      email: user.email,
-      phoneNumber: user.phoneNumber,
-    };
+    const result = _.pick(user, ['username', 'firstName', 'lastName',  'dateOfBirth', 'phoneNumber', 'email', 'governmentID', 'address']);
 
     return res.status(200).json({
       message : "User information retrieved successfully ✔️",
@@ -90,7 +78,6 @@ exports.getUserByUsername = async (req, res, next) => {
 
 
 exports.updateUser = async (req, res, next) =>{
-
   try {
     const { error } = validateUser(req.body);
     if (error) throw new BadRequestError(error.details[0].message);
@@ -128,6 +115,5 @@ exports.deleteUser = async (req, res, next) => {
   } catch (error) {
       next(error);
   }
-
 
 }

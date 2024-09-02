@@ -24,7 +24,7 @@ mongoose.connect(process.env.DB_CONNECTION_STRING, {
 });
  
 mongoose.connection.on('connected', () => {
-  logger.info('Connected to MongoDB ✔️');
+  logger.info('Connected to MongoDB ✔️✔️');
 });
 
 mongoose.connection.on('error', (err) => {
