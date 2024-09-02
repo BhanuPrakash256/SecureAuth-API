@@ -61,69 +61,69 @@ To run this project, you will need to add the following environment variables to
 ### User Endpoints
 
 1. #### Register User
-```http
+```bash
   POST /api/users   
 ```
 
 2. #### Get User's info
-```http
+```bash
   GET /api/users/{username}
   Authorization: 'Bearer ACCESS_TOKEN'
 ```
 
 3. #### Update User's info
-```http
+```bash
   PUT /api/users/{username}   
   Authorization: 'Bearer ACCESS_TOKEN'
 ```
 
 4. #### Delete User
-```http
+```bash
   DEL /api/users/{username}
   Authorization: 'Bearer ACCESS_TOKEN'
 ```
 ### Verification Endpoints
 1. #### Verify User's email
-```http
+```bash
   POST /api/users/verify-email/{username}   
 ```
 2. #### Verify User's phone number
-```http
+```bash
   POST /api/users/verify-phone/{username}   
 ```
 3. #### Get User's verification status
-```http
+```bash
   GET /api/users/verify-status/{username}
 ```
 ### Auth Endpoints
 1. #### User's Log in
-```http
+```bash
   POST /api/users/login   
 ```
 2. #### User's log out
-```http
+```bash
   POST /api/users/logout
   Authorization: 'Bearer REFRESH_TOKEN'
 ```
 3. #### Forgot password
-```http
+```bash
   POST /api/users/forgot-password   
 ```
 
 4. #### Reset password
-```http
+```bash
   POST /api/users/reset-password/RESET_PASSWORD_TOKEN
 ```
 
 ### Token Endpoints
 1. #### Issue new Access and Refresh tokens
-```http
+```bash
   POST /api/users/issue-tokens
   Authorization: 'Bearer REFRESH_TOKEN'
 ```
 
 2. #### Revoke new Access and Refresh tokens
-```http
+```bash
   POST /api/users/revoke-tokens
   Authorization: 'Bearer REFRESH_TOKEN'
 ```
