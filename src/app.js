@@ -1,42 +1,47 @@
-
 require('dotenv').config();
-const morgan = require('morgan');
+
 const express = require('express');
 const mongoose = require('mongoose');
+const morgan = require('morgan');
+const helmet = require('helmet');
+const cors = require('cors');
+
 const { UserRoute, PasswordRoute, TokenRoute, VerifyRoute, AuthRoute } = require('./routes/index');
-
+const healthRoute = require('./routes/health');
 const errorHandler = require('./middleware/error');
-
+const versionMiddleware = require('./middleware/version');
+const { globalLimiter } = require('./middleware/rateLimiter');
+const logger = require('./utils/logger');
 
 const app = express();
 
-// Middleware
+app.use(helmet());
+app.use(cors({ origin: process.env.CORS_ORIGIN || '*' }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(morgan('tiny'));
 
+mongoose
+  .connect(process.env.DB_CONNECTION_STRING, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .catch((err) => logger.error('MongoDB initial connection failed', { err }));
 
-// Connect to MongoDB
-mongoose.connect(process.env.DB_CONNECTION_STRING, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+mongoose.connection.on('connected', () => logger.info('Connected to MongoDB'));
+mongoose.connection.on('error', (err) => logger.error('MongoDB connection error', { err }));
 
-mongoose.connection.on('connected', () => {
-  console.log('Connected to MongoDB ✔️');
-});
+// Health check — no rate limit, no version prefix
+app.use('/health', healthRoute);
 
-mongoose.connection.on('error', (err) => {
-  console.error('MongoDB connection error:', err);
-});
-
-
-app.use('/api/users', UserRoute);
-app.use('/api/users', AuthRoute);
-app.use('/api/users', VerifyRoute);
-app.use('/api/users', TokenRoute);
-app.use('/api/users', PasswordRoute);
+// Versioned API — all user-facing routes live here
+app.use('/api/v1', versionMiddleware, globalLimiter);
+app.use('/api/v1/users', UserRoute);
+app.use('/api/v1/users', AuthRoute);
+app.use('/api/v1/users', VerifyRoute);
+app.use('/api/v1/users', TokenRoute);
+app.use('/api/v1/users', PasswordRoute);
 
 app.use(errorHandler);
 
-module.exports = app
+module.exports = app;

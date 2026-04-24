@@ -6,9 +6,9 @@ const verifyToken = (token, secret) => {
     return jwt.verify(token, secret);
   } catch (err) {
     if (err.name === 'TokenExpiredError') {
-      throw new TokenExpiredError('Token has expired. Please log in again.');
+      throw new TokenExpiredError('Token has expired!');
     }
-    throw new AuthenticationError('Unauthorized - Invalid token');
+    throw new AuthenticationError('Token is Invalid.');
   }
 };
 

@@ -37,10 +37,9 @@ exports.createUser = async (req, res, next) => {
     await send_email.sendVerificationEmail(newUser);
     await send_sms.sendVerificationSMS(newUser);
 
-    res.status(201).json({ 
-      message: `User created successfully.
-      Verification email sent. Verification code sent.`
-  }); 
+    res.status(201).json({
+      message: 'User created successfully. Verification email sent. Verification code sent.',
+    });
      
   } catch (error) {
       next(error);

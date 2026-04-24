@@ -39,10 +39,12 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true },
   emailVerified: { type: Boolean, default: false },
   emailVerificationCode: { type: String },
+  emailVerificationExpires: { type: Date },
 
   phoneNumber: { type: String, required: true },
   phoneVerified: { type: Boolean, default: false },
   phoneVerificationCode: { type: String },
+  phoneVerificationExpires: { type: Date },
   
   tokenVersion: {type: Number, default: 0},
   resetPasswordToken: { type: String },
@@ -70,6 +72,19 @@ userSchema.pre('save', async function(next) {
 userSchema.methods.comparePassword = async function(password) {
   return bcrypt.compare(password, this.password);
 };
+
+userSchema.set('toJSON', {
+  transform: (doc, ret) => {
+    delete ret.password;
+    delete ret.emailVerificationCode;
+    delete ret.emailVerificationExpires;
+    delete ret.phoneVerificationCode;
+    delete ret.phoneVerificationExpires;
+    delete ret.resetPasswordToken;
+    delete ret.resetPasswordExpires;
+    return ret;
+  },
+});
 
 const User = mongoose.model('User', userSchema);
 

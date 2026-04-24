@@ -1,28 +1,18 @@
-const twilio = require("twilio")
+const twilio = require('twilio');
+const crypto = require('crypto');
 
-const accountSid = process.env.TWILIO_ACCOUNT_SID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
-const client = twilio(accountSid, authToken);
-
+const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
 exports.sendVerificationSMS = async (user) => {
+  const verificationCode = crypto.randomInt(100000, 999999).toString();
 
-    try {
-        
-        const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-      
-        await client.messages.create({
-          body: `Your verification code is ${verificationCode}`,
-          from: process.env.TWILIO_PHONE_NUMBER,
-          to: user.phoneNumber
-        });
-      
-        user.phoneVerificationCode = verificationCode;
-        await user.save();
+  await client.messages.create({
+    body: `Your verification code is ${verificationCode}. Expires in 10 minutes.`,
+    from: process.env.TWILIO_PHONE_NUMBER,
+    to: user.phoneNumber,
+  });
 
-    } catch (error) {
-        console.error('Error sending verification code:', error);
-    }
-
-
+  user.phoneVerificationCode = verificationCode;
+  user.phoneVerificationExpires = new Date(Date.now() + 10 * 60 * 1000);
+  await user.save();
 };

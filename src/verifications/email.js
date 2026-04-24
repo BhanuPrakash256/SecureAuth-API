@@ -1,45 +1,16 @@
-const nodemailer = require('nodemailer')
-
+const { Resend } = require('resend');
+const crypto = require('crypto');
 
 exports.sendVerificationEmail = async (user) => {
-    try {
-        const transporter = nodemailer.createTransport({
-            host: 'smtp.ethereal.email',
-            port: 587,
-            auth: {
-                user: process.env.EMAIL,
-                pass: process.env.PASSWORD
-            }
-        });
-                
-        const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-        user.emailVerificationCode = verificationCode;
+  const verificationCode = crypto.randomInt(100000, 999999).toString();
+  user.emailVerificationCode = verificationCode;
+  user.emailVerificationExpires = new Date(Date.now() + 10 * 60 * 1000);
 
-
-        // Email options
-        let mailOptions = 
-        {
-            from: '"Games🎮" <verify-email@games.com>',
-            to: user.email,
-            subject: 'Games Verification Code',
-            text: `Dear User,
-        
-        Thank you for registering. Please use the following verification code to complete your registration:
-        
-        ${verificationCode}
-        
-        If you did not request this code, please ignore this email.
-        
-        Thank you,
-        Games Team`,
-        };
-
-        await transporter.sendMail(mailOptions);
-        
-        console.log('Verification email sent to:', user.email);
-                
-    } catch (error) {
-        console.error('Error sending verification email:', error);
-    }
+  const resend = new Resend(process.env.RESEND_API_KEY);
+  await resend.emails.send({
+    from: process.env.EMAIL_FROM || 'verify@yourdomain.com',
+    to: user.email,
+    subject: 'Your Email Verification Code',
+    text: `Your verification code is: ${verificationCode}\n\nThis code expires in 10 minutes.\n\nIf you did not request this, please ignore this email.`,
+  });
 };
-
